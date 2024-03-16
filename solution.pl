@@ -135,7 +135,12 @@ replaceBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList):-
 calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList, TotalPrice).
 
 /* 11. Calculate the difference in price between the boycott item and its alternative. */
-getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, PriceDiff).
+% Helper Pridict: getTheDifferenceInPriceBetweenItemAndAlternative gets each alternative item name, then gets the price of the boycott item and each alternative item, and finally assign DifferenceInPrice with the difference in price between them
+getTheDifferenceInPriceBetweenItemAndAlternative(BoycottItemName, AlternativeItemName, DifferenceInPrice):-
+    item(BoycottItemName, _, BoycottItemPrice),
+    alternative(BoycottItemName, AlternativeItemName),
+    item(AlternativeItemName, _, AlternativeItemPrice),
+    DifferenceInPrice is BoycottItemPrice - AlternativeItemPrice.
 
 /* 12. [BONUS] Insert/Remove (1)Item, (2)Alternative, and (3)New boycott company to/from the knowledge base. */
 % Add new item to the knowledge base
