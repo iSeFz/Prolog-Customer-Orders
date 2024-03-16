@@ -8,8 +8,41 @@
 /* 1. List all orders of a specific customer (as a list) */
 list_orders(CustomerName, ListOfOrders).
 
+
 /* 2. Get the number of orders of a specific customer given customer id. */
-countOrdersOfCustomer(CustomerName, OrderCount).
+% Helper Predict: get the customer id from the customer name
+getCustomerId(CustomerName, CustomerId) :-
+    customer(CustomerId, CustomerName).
+
+% Helper Pridict: Get the length of the orders
+ordersLength([], 0).
+ordersLength([_Head|Tail], N):-
+    ordersLength(Tail, N1),
+    N is N1 + 1.
+
+% Helper Predict: Define the append predicate used in get orders
+append([], List, List).
+append([Head|Tail1], List2, [Head|Result]) :-
+    append(Tail1, List2, Result).
+
+% Helper Pridict: Define the getOrdersForCustomer
+getOrdersForCustomer(CustomerId, Orders) :-
+    getOrdersForCustomer(CustomerId, 1, [], Orders).
+
+getOrdersForCustomer(CustomerId, OrderNum, AccOrders, Orders) :- % Recursive Call
+    order(CustomerId, OrderNum, Order),
+    append(AccOrders, [Order], NewAccOrders),
+    NextOrderNum is OrderNum + 1,
+    getOrdersForCustomer(CustomerId, NextOrderNum, NewAccOrders, Orders).
+
+getOrdersForCustomer(_CustomerId, _OrderNum, Orders, Orders). % Base case
+
+% The main poredict: count all orders of customer id
+countOrdersOfCustomer(CustomerName, Count) :-
+    getCustomerId(CustomerName, CustomerId),
+    getOrdersForCustomer(CustomerId, Orders),
+    ordersLength(Orders, Count).
+
 
 /* 3. List all items in a specific customer order given customer id and order id. */
 getItemsInOrderById(CustomerName, OrderId, ListOfItems).
