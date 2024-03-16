@@ -1,7 +1,7 @@
 /* Assignment #1 - Customers & Orders */
 
 % Include the data file containing facts about customers, orders, companies to boycott & alternatives
-:-consult(data).
+:-[data].
 % Define dynamic predicates for addition/removal of facts
 :-dynamic(item/3).
 :-dynamic(alternative/2).
@@ -93,7 +93,20 @@ removeBoycottItemsFromAnOrder(CustomerName, OrderId, NewList) :-
 
 
 /* 9. Given an username and order ID, update the order such that all boycott items are replaced by an alternative (if exists). */
-replaceBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList).
+% Update the list of order items with non-boycott products
+updateList([],[]).
+updateList([Item|Rest], [AltItem|UpdatedRest]):-
+	% Check if the item has an alternative and if so, do nothing
+	% Otherwise, modify the AltItem to be the current Item (which is non-boycott)
+	(alternative(Item, AltItem) -> true; AltItem = Item),
+	% Recursively update the rest of the list
+	updateList(Rest, UpdatedRest).
+
+replaceBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList):-
+	% Retrieve the list of customer's order items by order id
+	% TODO: Waiting Anwar's Implementation
+	getItemsInOrderById(CustomerName, OrderId, ListOfItems),
+	updateList(ListOfItems, NewOrderList).
 
 /* 10. Given an username and order ID, calculate the price of the order after replacing all boycott items by its alternative (if it exists). */
 calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList, TotalPrice).
