@@ -66,7 +66,31 @@ isBoycott(ItemName):-
 whyToBoycott(ItemName, Justification).
 
 /* 8. Given an username and order ID, remove all the boycott items from this order. */
-removeBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList).
+% Helper Pridict: Define the boycott items
+boycott_item(boycott, Item) :-
+    item(Item, Company, _),
+    boycott_company(Company, _).
+
+% Helper Pridict:
+removeBoycottItems([], Acc, Acc). % Base case: if no items in the list
+
+removeBoycottItems([Item|Rest], Acc, NewList) :-
+    boycott_item(boycott, Item), % Check if the item is boycotted
+    removeBoycottItems(Rest, Acc, NewList). % remove the boycotted item
+
+removeBoycottItems([Item|Rest], Acc, NewList) :-
+    % If the item is not boycotted, add it to the accumulator
+    append(Acc, [Item], UpdatedAcc),
+    % and complete the recursive call till the end of the order's list
+    removeBoycottItems(Rest, UpdatedAcc, NewList).
+
+
+removeBoycottItemsFromAnOrder(CustomerName, OrderId, NewList) :-
+    getCustomerId(CustomerName, CustomerId),
+    order(CustomerId, OrderId, Items),
+    removeBoycottItems(Items, [], NewList).
+
+
 
 /* 9. Given an username and order ID, update the order such that all boycott items are replaced by an alternative (if exists). */
 replaceBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList).
