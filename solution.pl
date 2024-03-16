@@ -2,6 +2,10 @@
 
 % Include the data file containing facts about customers, orders, companies to boycott & alternatives
 :-consult(data).
+% Define dynamic predicates for addition/removal of facts
+:-dynamic(item/3).
+:-dynamic(alternative/2).
+:-dynamic(boycott_company/2).
 
 % Required Predicates
 
@@ -41,4 +45,27 @@ calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderLi
 getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, PriceDiff).
 
 /* 12. [BONUS] Insert/Remove (1)Item, (2)Alternative, and (3)New boycott company to/from the knowledge base. */
+% Add new item to the knowledge base
+addNewItem(ItemName, CompanyName, Price):-
+	assert(item(ItemName, CompanyName, Price)).
+
+% Add new alternative to the knowledge base
+addNewAlternative(ItemName, AlternativeItem):-
+	assert(alternative(ItemName, AlternativeItem)).
+
+% Add new boycott company to the knowledge base
+addNewBoycottCompany(CompanyName, Justification):-
+	assert(boycott_company(CompanyName, Justification)).
+
+% Remove item from the knowledge base
+removeItem(ItemName, CompanyName, Price):-
+	retract(item(ItemName, CompanyName, Price)).
+
+% Remove alternative from the knowledge base
+removeAlternative(ItemName, AlternativeItem):-
+	retract(alternative(ItemName, AlternativeItem)).
+
+% Remove boycott company from the knowledge base
+removeBoycottCompany(CompanyName, Justification):-
+	retract(boycott_company(CompanyName, Justification)).
 
