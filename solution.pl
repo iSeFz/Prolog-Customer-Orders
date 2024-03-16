@@ -55,7 +55,20 @@ getItemsInOrderById(CustomerName, OrderId, ListOfItems).
 getNumOfItems(CustomerName, OrderId, ItemCount).
 
 /* 5. Calculate the price of a given order given customer name and order id. */
-calcPriceOfOrder(CustomerName, OrderId, TotalPrice).
+% Helper Pridict: Define the calcPriceOfOrder to get the customer id and the order id so that we can obtain items price
+calcPriceOfOrder(CustomerName, OrderId, TotalPrice):- 
+    customer(CustomerId, CustomerName),
+    order(CustomerId, OrderId, Items),
+    calcPriceOfItems(Items, TotalPrice).
+
+% Helper Pridict: Define the calcPriceOfItems to get the Total price of all items array
+
+calcPriceOfItems([], 0).
+
+calcPriceOfItems([ItemsHead|ItemsTail], TotalPrice):- 
+    item(ItemsHead, _, Price),
+    calcPriceOfItems(ItemsTail, TotalPriceTail),
+    TotalPrice is Price + TotalPriceTail.
 
 /* 6. Given the item name or company name, determine whether we need to boycott or not. */
 isBoycott(ItemName):-
