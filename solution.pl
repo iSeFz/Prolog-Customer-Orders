@@ -76,7 +76,17 @@ isBoycott(ItemName):-
 	boycott_company(CompanyName, _).
 
 /* 7. Given the company name or an item name, find the justification why you need to boycott this company/item. */
-whyToBoycott(ItemName, Justification).
+% Helper Pridict: This whyToBoycott handle the first argument if it is the company name, then we can get the justification directly
+whyToBoycott(CompanyName, Justification):- 
+    item(_, CompanyName, _),
+    !,
+    boycott_company(CompanyName, Justification).
+
+
+% Helper Pridict: This whyToBoycott handle the first argument if it is the item name, then we should get its company name, and finally recall the same predicate but now with the company name
+whyToBoycott(ItemName, Justification):-
+    item(ItemName, CompanyName, _),
+    whyToBoycott(CompanyName, Justification).
 
 /* 8. Given an username and order ID, remove all the boycott items from this order. */
 % Helper Pridict: Define the boycott items
