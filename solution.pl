@@ -21,7 +21,9 @@ getNumOfItems(CustomerName, OrderId, ItemCount).
 calcPriceOfOrder(CustomerName, OrderId, TotalPrice).
 
 /* 6. Given the item name or company name, determine whether we need to boycott or not. */
-isBoycott(ItemName).
+isBoycott(ItemName):-
+	item(ItemName, CompanyName, _),
+	boycott_company(CompanyName, _).
 
 /* 7. Given the company name or an item name, find the justification why you need to boycott this company/item. */
 whyToBoycott(ItemName, Justification).
