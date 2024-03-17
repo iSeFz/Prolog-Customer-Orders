@@ -49,10 +49,15 @@ countOrdersOfCustomer(CustomerName, Count) :-
 
 
 /* 3. List all items in a specific customer order given customer id and order id. */
-getItemsInOrderById(CustomerName, OrderId, ListOfItems).
+getItemsInOrderById(CustomerName, OrderId, ListOfItems):-
+  customer(CustId,CustomerName),            % get the customerId
+  order(CustId,OrderId,ListOfItems).        
 
 /* 4. Get the number of items in a specific customer order given customer name and order id. */
-getNumOfItems(CustomerName, OrderId, ItemCount).
+getNumOfItems(CustomerName, OrderId, ItemCount):-
+  customer(CustId,CustomerName),           % get the customerId
+  order(CustId,OrderId,ListOfItems),      % get the customer list of items of a specific id
+  ordersLength(ListOfItems,ItemCount).    % calc the number of items in the list
 
 /* 5. Calculate the price of a given order given customer name and order id. */
 % Helper Pridict: Define the calcPriceOfOrder to get the customer id and the order id so that we can obtain items price
