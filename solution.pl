@@ -51,7 +51,7 @@ countOrdersOfCustomer(CustomerName, Count) :-
 /* 3. List all items in a specific customer order given customer id and order id. */
 getItemsInOrderById(CustomerName, OrderId, ListOfItems):-
   customer(CustId,CustomerName),            % get the customerId
-  order(CustId,OrderId,ListOfItems).        
+  order(CustId,OrderId,ListOfItems).
 
 /* 4. Get the number of items in a specific customer order given customer name and order id. */
 getNumOfItems(CustomerName, OrderId, ItemCount):-
@@ -61,7 +61,7 @@ getNumOfItems(CustomerName, OrderId, ItemCount):-
 
 /* 5. Calculate the price of a given order given customer name and order id. */
 % Helper Pridict: Define the calcPriceOfOrder to get the customer id and the order id so that we can obtain items price
-calcPriceOfOrder(CustomerName, OrderId, TotalPrice):- 
+calcPriceOfOrder(CustomerName, OrderId, TotalPrice):-
     customer(CustomerId, CustomerName),
     order(CustomerId, OrderId, Items),
     calcPriceOfItems(Items, TotalPrice).
@@ -70,7 +70,7 @@ calcPriceOfOrder(CustomerName, OrderId, TotalPrice):-
 
 calcPriceOfItems([], 0).
 
-calcPriceOfItems([ItemsHead|ItemsTail], TotalPrice):- 
+calcPriceOfItems([ItemsHead|ItemsTail], TotalPrice):-
     item(ItemsHead, _, Price),
     calcPriceOfItems(ItemsTail, TotalPriceTail),
     TotalPrice is Price + TotalPriceTail.
@@ -82,7 +82,7 @@ isBoycott(ItemName):-
 
 /* 7. Given the company name or an item name, find the justification why you need to boycott this company/item. */
 % Helper Pridict: This whyToBoycott handle the first argument if it is the company name, then we can get the justification directly
-whyToBoycott(CompanyName, Justification):- 
+whyToBoycott(CompanyName, Justification):-
     item(_, CompanyName, _),
     !,
     boycott_company(CompanyName, Justification).
@@ -137,7 +137,12 @@ replaceBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList):-
 	updateList(ListOfItems, NewOrderList).
 
 /* 10. Given an username and order ID, calculate the price of the order after replacing all boycott items by its alternative (if it exists). */
-calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderId, NewOrderList, TotalPrice).
+calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderId, NewList, TotalPrice) :-
+    getCustomerId(CustomerName, CustomerId),
+    order(CustomerId, OrderId, _Items),
+    replaceBoycottItemsFromAnOrder(CustomerName, OrderId, NewList),
+    calcPriceOfItems(NewList, TotalPrice).
+
 
 /* 11. Calculate the difference in price between the boycott item and its alternative. */
 % Helper Pridict: getTheDifferenceInPriceBetweenItemAndAlternative gets each alternative item name, then gets the price of the boycott item and each alternative item, and finally assign DifferenceInPrice with the difference in price between them
