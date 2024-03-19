@@ -10,7 +10,11 @@
 % Required Predicates
 
 /* 1. List all orders of a specific customer (as a list) */
-list_orders(CustomerName, ListOfOrders).
+list_orders(CustomerName, ListOfOrders) :-
+      customer(CustId,CustomerName),            % get the customerId
+      getOrdersForCustomer(CustId, ListOfOrders).
+
+
 
 
 /* 2. Get the number of orders of a specific customer given customer id. */
