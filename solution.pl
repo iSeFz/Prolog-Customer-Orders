@@ -10,9 +10,17 @@
 % Required Predicates
 
 /* 1. List all orders of a specific customer (as a list) */
+
+getOrdersForCustomer2(CustomerId, OrderNum, AccOrders, Orders):- % Recursive Call
+    order(CustomerId, OrderNum, OrderItems),
+    NewAccOrders = [order(CustomerId, OrderNum, OrderItems) | AccOrders], % Add new order to the front
+    NextOrderNum is OrderNum + 1,
+    getOrdersForCustomer2(CustomerId, NextOrderNum, NewAccOrders, Orders).
+ getOrdersForCustomer2(_, _, Orders, Orders). % Base case
+
 list_orders(CustomerName, ListOfOrders):-
     customer(CustId, CustomerName),
-    getOrdersForCustomer(CustId, 1, [], ListOfOrders).
+    getOrdersForCustomer2(CustId, 1, [], ListOfOrders).
 
 /* 2. Get the number of orders of a specific customer given customer id. */
 % Helper predicate: Get the length of the orders
