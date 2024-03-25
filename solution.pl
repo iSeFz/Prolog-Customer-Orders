@@ -10,43 +10,29 @@
 % Required Predicates
 
 /* 1. List all orders of a specific customer (as a list) */
-
-getOrdersForCustomer2(CustomerId, OrderNum, AccOrders, Orders):- % Recursive Call
+getOrdersForCustomer(CustomerId, OrderNum, AccOrders, Orders):- % Recursive Call
     order(CustomerId, OrderNum, OrderItems),
     NewAccOrders = [order(CustomerId, OrderNum, OrderItems) | AccOrders], % Add new order to the front
     NextOrderNum is OrderNum + 1,
-    getOrdersForCustomer2(CustomerId, NextOrderNum, NewAccOrders, Orders).
- getOrdersForCustomer2(_, _, Orders, Orders). % Base case
+    getOrdersForCustomer(CustomerId, NextOrderNum, NewAccOrders, Orders),
+    !. % Cut to prevent backtracking
+
+getOrdersForCustomer(_, _, Orders, Orders). % Base case
 
 list_orders(CustomerName, ListOfOrders):-
     customer(CustId, CustomerName),
-    getOrdersForCustomer2(CustId, 1, [], ListOfOrders).
+    getOrdersForCustomer(CustId, 1, [], ListOfOrders).
 
 /* 2. Get the number of orders of a specific customer given customer id. */
 % Helper predicate: Get the length of the orders
 ordersLength([], 0).
 ordersLength([_ | Tail], N):-
-    ordersLength(Tail, N1),
-    N is N1 + 1.
+    ordersLength(Tail, TempN),
+    N is TempN + 1.
 
-% Helper predicate: Define the append predicate used in get orders
-append([], List, List).
-append([Head | Tail1], List2, [Head | Result]):-
-    append(Tail1, List2, Result).
-
-getOrdersForCustomer(CustomerId, OrderNum, AccOrders, Orders):- % Recursive Call
-    order(CustomerId, OrderNum, OrderItems),
-    append(AccOrders, [OrderItems], NewAccOrders),
-    NextOrderNum is OrderNum + 1,
-    getOrdersForCustomer(CustomerId, NextOrderNum, NewAccOrders, Orders),
-    !. % Cut to prevent backtracking
-
-getOrdersForCustomer(_CustomerId, _OrderNum, Orders, Orders). % Base case
-
-% The main predicate: count all orders of customer id
+% The main predicate: Count all orders of certain customer using customer name
 countOrdersOfCustomer(CustomerName, Count):-
-    customer(CustomerId, CustomerName),
-    getOrdersForCustomer(CustomerId, 1, [], Orders),
+    list_orders(CustomerName, Orders),
     ordersLength(Orders, Count).
 
 /* 3. List all items in a specific customer order given customer id and order id. */
@@ -91,6 +77,11 @@ whyToBoycott(ItemName, Justification):-
     whyToBoycott(CompanyName, Justification).
 
 /* 8. Given an username and order ID, remove all the boycott items from this order. */
+% Helper predicate: Define the append predicate used in remove boycott items
+append([], List, List).
+append([Head | Tail1], List2, [Head | Result]):-
+    append(Tail1, List2, Result).
+
 % Helper predicate: Remove any boycott item in the list given
 removeBoycottItems([], Acc, Acc). % Base case: if no items in the list
 
